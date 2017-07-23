@@ -1,0 +1,8 @@
+parameters:
+    linkin_entity_helper.helper.class: Linkin\Bundle\EntityHelperBundle\Helper\EntityHelper
+
+services:
+    linkin_entity_helper.helper:
+        class:      '%linkin_entity_helper.helper.class%'
+        arguments:
+            - '@doctrine.orm.entity_manager'

@@ -1,0 +1,25 @@
+{
+    "name":        "adrenalinkin/entity-helper-bundle",
+    "description": "This bundle provides help for the work with entities which managed by Doctrine",
+    "type":        "symfony-bundle",
+    "keywords":    ["doctrine", "entity", "helper", "symfony2", "bundle"],
+    "license":     "MIT",
+
+    "authors": [
+        {
+            "email": "adrenalinkin@gmail.com",
+            "name":  "Viktor Linkin",
+            "role":  "Developer"
+        }
+    ],
+
+    "require": {
+        "php": ">=5.4"
+    },
+
+    "autoload": {
+        "psr-4": {
+            "Linkin\\Bundle\\EntityHelperBundle\\": ""
+        }
+    }
+}
