@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of the LinkinEntityHelperBundle package.
+ *
+ * (c) Viktor Linkin <adrenalinkin@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Linkin\Bundle\EntityHelperBundle\Helper;
 
 use Doctrine\Common\Persistence\Mapping\MappingException;
@@ -11,6 +20,9 @@ use Doctrine\ORM\EntityManagerInterface;
  */
 class EntityHelper
 {
+    /**
+     * Offset for the identity
+     */
     const IDENTITY = '__ID__';
 
     /**
@@ -56,7 +68,7 @@ class EntityHelper
             }
 
             foreach ($fields as $fieldName => $fieldValue) {
-                if ($fieldName == self::IDENTITY) {
+                if (self::IDENTITY === $fieldName) {
                     $property = $reflection->getProperty($this->getEntityIdName($className));
                 } else {
                     $property = $reflection->getProperty($fieldName);
@@ -120,8 +132,9 @@ class EntityHelper
 
         foreach ($this->entityManager->getConfiguration()->getEntityNamespaces() as $short => $full) {
             if (false !== strpos($entity, $full)) {
-                $short .= ':' . ltrim(str_replace($full, '', $entity), '\\');
+                $short .= ':'.ltrim(str_replace($full, '', $entity), '\\');
                 $this->cache[$full][$cacheKey] = $short;
+
                 return $short;
             }
         }
@@ -203,18 +216,6 @@ class EntityHelper
     }
 
     /**
-     * @param string $className
-     * @param string $property
-     * @param bool   $default
-     *
-     * @return mixed
-     */
-    private function getFromCache($className, $property, $default = false)
-    {
-        return empty($this->cache[$className][$property]) ? $default : $this->cache[$className][$property];
-    }
-
-    /**
      * @param object|string $entity
      *
      * @return bool
@@ -239,6 +240,18 @@ class EntityHelper
         $this->cache[$entity][$cacheKey] = $isManaged;
 
         return $isManaged;
+    }
+
+    /**
+     * @param string $className
+     * @param string $property
+     * @param bool   $default
+     *
+     * @return mixed
+     */
+    private function getFromCache($className, $property, $default = false)
+    {
+        return empty($this->cache[$className][$property]) ? $default : $this->cache[$className][$property];
     }
 
     /**
