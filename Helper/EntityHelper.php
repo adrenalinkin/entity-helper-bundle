@@ -11,7 +11,6 @@
 
 namespace Linkin\Bundle\EntityHelperBundle\Helper;
 
-use Doctrine\Common\Persistence\Mapping\MappingException;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -51,6 +50,8 @@ class EntityHelper
     }
 
     /**
+     * Create instance of the class, which managed by Doctrine, by received class name
+     *
      * @param string $className
      * @param array  $fields
      *
@@ -58,35 +59,37 @@ class EntityHelper
      */
     public function createEntity($className, array $fields = [])
     {
-        if (null !== $metadata = $this->getEntityMetadata($className)) {
-            $reflection = $metadata->getReflectionClass();
+        $metadata = $this->getEntityMetadata($className);
 
-            try {
-                $entity = $reflection->newInstance();
-            } catch (\Exception $e) {
-                $entity = $reflection->newInstanceWithoutConstructor();
-            }
-
-            foreach ($fields as $fieldName => $fieldValue) {
-                if (self::IDENTITY === $fieldName) {
-                    $property = $reflection->getProperty($this->getEntityIdName($className));
-                } else {
-                    $property = $reflection->getProperty($fieldName);
-                }
-
-                try {
-                    $property->setValue($entity, $fieldValue);
-                } catch (\ReflectionException $e) {
-                    $property->setAccessible(true);
-                    $property->setValue($entity, $fieldValue);
-                    $property->setAccessible(false);
-                }
-            }
-
-            return $entity;
+        if (is_null($metadata)) {
+            return null;
         }
 
-        return null;
+        $reflection = $metadata->getReflectionClass();
+
+        try {
+            $entity = $reflection->newInstance();
+        } catch (\Exception $e) {
+            $entity = $reflection->newInstanceWithoutConstructor();
+        }
+
+        foreach ($fields as $fieldName => $fieldValue) {
+            if (self::IDENTITY === $fieldName) {
+                $property = $reflection->getProperty($this->getEntityIdName($className));
+            } else {
+                $property = $reflection->getProperty($fieldName);
+            }
+
+            try {
+                $property->setValue($entity, $fieldValue);
+            } catch (\Exception $e) {
+                $property->setAccessible(true);
+                $property->setValue($entity, $fieldValue);
+                $property->setAccessible(false);
+            }
+        }
+
+        return $entity;
     }
 
     /**
@@ -131,12 +134,14 @@ class EntityHelper
         }
 
         foreach ($this->entityManager->getConfiguration()->getEntityNamespaces() as $short => $full) {
-            if (false !== strpos($entity, $full)) {
-                $short .= ':'.ltrim(str_replace($full, '', $entity), '\\');
-                $this->cache[$full][$cacheKey] = $short;
-
-                return $short;
+            if (false === strpos($entity, $full)) {
+                continue;
             }
+
+            $short .= ':'.ltrim(str_replace($full, '', $entity), '\\');
+            $this->cache[$full][$cacheKey] = $short;
+
+            return $short;
         }
 
         return $entity;
@@ -197,22 +202,22 @@ class EntityHelper
      */
     public function getEntityMetadata($entity)
     {
-        if ($this->isManagedByDoctrine($entity)) {
-            $cacheKey = 'metadata';
-            $entity   = $this->getEntityClassFull($entity);
-            $metadata = $this->getFromCache($entity, $cacheKey);
+        if (!$this->isManagedByDoctrine($entity)) {
+            return null;
+        }
 
-            if (false !== $metadata) {
-                return $metadata;
-            }
+        $cacheKey = 'metadata';
+        $entity   = $this->getEntityClassFull($entity);
+        $metadata = $this->getFromCache($entity, $cacheKey);
 
-            $metadata = $this->entityManager->getClassMetadata($entity);
-            $this->cache[$metadata->getName()][$cacheKey] = $metadata;
-
+        if (false !== $metadata) {
             return $metadata;
         }
 
-        return null;
+        $metadata = $this->entityManager->getClassMetadata($entity);
+        $this->cache[$metadata->getName()][$cacheKey] = $metadata;
+
+        return $metadata;
     }
 
     /**
@@ -233,7 +238,7 @@ class EntityHelper
         try {
             $this->managed = $isManaged = (bool) $this->entityManager->getReference($entity, 0);
             $entity = $this->getEntityClassFull($entity);
-        } catch (MappingException $e) {
+        } catch (\Exception $e) {
             $isManaged = false;
         }
 

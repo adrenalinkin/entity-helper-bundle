@@ -1,6 +1,11 @@
+## [1.0.3] - 2017-11-30
+### Changed
+- Approved support of the Symfony `2.7`.
+- Refactored `EntityHelper` to more readable code.
+
 ## [1.0.2] - 2017-11-22
-### Updated
-- Approved support of the Symfony 2.6.
+### Changed
+- Approved support of the Symfony `2.6`.
 
 ## [1.0.1] - 2017-11-15
 ### Fixed
