@@ -1,3 +1,8 @@
+## [1.0.4] - 2017-12-06
+### Changed
+- Approved support of the Symfony `2.8`.
+- Minimal PHP version upped to `5.6`.
+
 ## [1.0.3] - 2017-11-30
 ### Changed
 - Approved support of the Symfony `2.7`.
