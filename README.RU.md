@@ -1,40 +1,37 @@
-Entity Helper Bundle [![На Русском](https://img.shields.io/badge/Перейти_на-Русский-green.svg?style=flat-square)](./README.RU.md)
+Entity Helper Bundle [![In English](https://img.shields.io/badge/Switch_To-English-green.svg?style=flat-square)](./README.md)
 ====================
 
-Introduction
+Введение
 --------
 
-Helper allows you to perform often required operations with entities which managed by `Doctrine`.
+Помощник позволяет выполнять востребованные преобразования с сущностями управляемыми `Doctrine`.
+Функциональность помощника доступна для работы с объектами, находящимся под управлением доктрины.
+Помощник использует внутренний кэш для экономии вычислительных ресурсов.
 
-Installation
-------------
+Установка
+---------
 
-### Step 1: Download the Bundle
+### Шаг 1: Загрузка бандла
 
-Open a command console, enter your project directory and execute the following command to download the latest stable
-version of this bundle:
+Откройте консоль и, перейдя в директорию проекта, выполните следующую команду для загрузки наиболее подходящей
+стабильной версии этого бандла:
 ```text
     composer require adrenalinkin/entity-helper-bundle
 ```
-*This command requires you to have [Composer](https://getcomposer.org) install globally.*
+*Эта команда подразумевает что [Composer](https://getcomposer.org) установлен и доступен глобально.*
 
-### Step 2: Enable the Bundle
+### Шаг 2: Подключение бандла
+
+После включите бандл добавив его в список зарегистрированных бандлов в `app/AppKernel.php` файл вашего проекта:
 
 ```php
 <?php
 // app/AppKernel.php
 
-use Symfony\Component\HttpKernel\Kernel;
-use Symfony\Component\Config\Loader\LoaderInterface;
-
-/**
- * The Kernel is the heart of the Symfony system
- */
 class AppKernel extends Kernel
 {
-    /**
-     * {@inheritdoc}
-     */
+    // ...
+
     public function registerBundles()
     {
         $bundles = [
@@ -46,20 +43,14 @@ class AppKernel extends Kernel
         return $bundles;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function registerContainerConfiguration(LoaderInterface $loader)
-    {
-        $loader->load($this->getRootDir().'/config/config_'.$this->getEnvironment().'.yml');
-    }
+    // ...
 }
 ```
 
-Usage
------
+Использование
+-------------
 
-Get entity helper by dependencies container:
+Вызов помощника через контейнер зависимостей:
 
 ```php
 <?php
@@ -73,7 +64,7 @@ $entityHelper = $container->get('linkin_entity_helper.helper');
 
 ```
 
-Let's say we have an entity `AcmeBundle\Entity\User`:
+Допустим у нас есть сущность `AcmeBundle\Entity\User`:
 
 ```php
 <?php
@@ -111,7 +102,7 @@ class User
 
 ### createEntity
 
-Create instance of the class, which managed by Doctrine, by received class name.
+Создает сущность и заполняет ее поля значениями, принимает на вход имя класса и массив полей.
 
 ```php
 <?php
@@ -121,16 +112,16 @@ Create instance of the class, which managed by Doctrine, by received class name.
 /** @var \Symfony\Component\DependencyInjection\ContainerInterface $container */
 $entityHelper = $container->get('linkin_entity_helper.helper');
 
-// Create empty User entity
+// Создать пустую сущность User
 $user = $entityHelper->createEntity(User::class);
 
-// Create empty User entity by received short name
+// Создать пустую сущность на основе короткого имени
 $user = $entityHelper->createEntity('AcmeBundle:User');
 
-// Create User entity and fill some fields
+// Создать сущность и заполнить поля значениями
 $user = $entityHelper->createEntity('AcmeBundle:User', ['id' => 1, 'username' => 'acme-login']);
 
-// Create User entity and fill identity field in that case when you don't know the name of the identity field
+// Создать сущность и заполнить идентификатор если имя поля идентификатора заранее неизвестно
 foreach (['AcmeBundle:User', 'AcmeBundle:Role'] as $className) {
     $object = $entityHelper->createEntity($className, [EntityHelper::IDENTITY => 1]);
 }
@@ -138,7 +129,7 @@ foreach (['AcmeBundle:User', 'AcmeBundle:Role'] as $className) {
 
 ### getEntityClassFull
 
-Returns full name of the received entity or class name.
+Возвращает полное имя класса на основе объекта или имени класса.
 
 ```php
 <?php
@@ -155,11 +146,11 @@ $className = $entityHelper->getEntityClassFull('AcmeBundle:User');
 $className = $entityHelper->getEntityClassFull($user);
 ```
 
-In the all cases will be return string value: `AcmeBundle\Entity\User`.
+Во всех случаях будет возвращена строка: `AcmeBundle\Entity\User`.
 
 ### getEntityClassShort
 
-Returns short name of the received entity or class name.
+Возвращает сокращенное имя класса на основе объекта или имени класса.
 
 ```php
 <?php
@@ -176,11 +167,11 @@ $className = $entityHelper->getEntityClassShort('AcmeBundle\Entity\User');
 $className = $entityHelper->getEntityClassShort($user);
 ```
 
-In the all cases will be return string value: `AcmeBundle:User`.
+Во всех случаях будет возвращена строка: `AcmeBundle:User`.
 
 ### getEntityIdNames
 
-Returns an array of identifier field names numerically indexed.
+Возвращает список имен полей идентификаторов на основе объекта или имени класса.
 
 ```php
 <?php
@@ -198,12 +189,12 @@ $names = $entityHelper->getEntityIdNames('AcmeBundle:User');
 $names = $entityHelper->getEntityIdNames($user);
 ```
 
-In the all cases will be return array value: `['id']`.
+Во всех случаях будет возвращен массив: `['id']`.
 
 ### getEntityIdName
 
-Returns single identifier field name by received entity object or class name. 
-**Important**: In that case when entity have several identifier names method will be return only first identifier name.
+Возвращает название поля идентификатора класса на основе объекта или имени класса.
+**Важно**: если класс имеет два или более идентификатора то метод вернет название только одного первого поля.
 
 ```php
 <?php
@@ -221,11 +212,11 @@ $idName = $entityHelper->getEntityIdName('AcmeBundle:User');
 $idName = $entityHelper->getEntityIdName($user);
 ```
 
-In the all cases will be return string value: `id`.
+Во всех случаях будет возвращена строка: `id`.
 
 ### getEntityIdValues
 
-Returns an array of identifier values by received entity object.
+Возвращает список значений всех идентификаторов класса на основе объекта класса.
 
 ```php
 <?php
@@ -240,12 +231,12 @@ $user = $entityHelper->createEntity('AcmeBundle:User', ['id' => 1]);
 $idValues = $entityHelper->getEntityIdValues($user);
 ```
 
-Will be return array value: `[1]`.
+Будет возвращен массив: `[1]`.
 
 ### getEntityIdValue
 
-Returns single identifier field value by received entity object. 
-**Important**: In that case when entity have several identifier method will be return only first identifier field value.
+Возвращает значение идентификатора класса на основе объекта класса.
+**Важно**: если класс имеет два или более идентификатора то метод вернет значение только одного первого поля.
 
 ```php
 <?php
@@ -260,11 +251,11 @@ $user = $entityHelper->createEntity('AcmeBundle:User', ['id' => 1]);
 $idValue = $entityHelper->getEntityIdValues($user);
 ```
 
-Will be return numeric value: `1`.
+Будет возвращено число: `1`.
 
 ### getEntityMetadata
 
-Returns `\Doctrine\ORM\Mapping\ClassMetadata` object for received entity or class name.
+Возвращает мета-данные класса `\Doctrine\ORM\Mapping\ClassMetadata` на основе объекта или имени класса.
 
 ```php
 <?php
@@ -282,11 +273,11 @@ $metaData = $entityHelper->getEntityMetadata('AcmeBundle:User');
 $metaData = $entityHelper->getEntityMetadata($user);
 ```
 
-In the all cases will be return object value: `\Doctrine\ORM\Mapping\ClassMetadata`.
+Во всех случаях будет возвращен объект: `\Doctrine\ORM\Mapping\ClassMetadata`.
 
 ### isManagedByDoctrine
 
-Determines whether the requested class is under the control of `Doctrine`.
+Определяет находится ли под управлением `Doctrine` запрашиваемый класс.
 
 ```php
 <?php
@@ -304,9 +295,9 @@ $isManaged = $entityHelper->isManagedByDoctrine('AcmeBundle:User');
 $isManaged = $entityHelper->isManagedByDoctrine($user);
 ```
 
-In the all cases will be return bool value: `true`.
+Во всех случаях будет возвращено логическое значение: `true`.
 
-License
--------
+Лицензия
+--------
 
 [![license](https://img.shields.io/badge/License-MIT-green.svg?style=flat-square)](./LICENSE)

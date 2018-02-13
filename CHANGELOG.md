@@ -1,3 +1,9 @@
+## [1.0.5] - 2018-02-13
+### Added
+- Added informative PhpDoc.
+- Improved documentation.
+- Added english version of the documentation.
+
 ## [1.0.4] - 2017-12-06
 ### Changed
 - Approved support of the Symfony `2.8`.
@@ -14,7 +20,7 @@
 
 ## [1.0.1] - 2017-11-15
 ### Fixed
-- Applied Symfony Standards over the PSR-2 
+- Applied Symfony Standards over the PSR-2.
 
 ## [1.0.0]
 ### Added

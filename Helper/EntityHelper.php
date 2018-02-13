@@ -25,6 +25,8 @@ class EntityHelper
     const IDENTITY = '__ID__';
 
     /**
+     * Contains already evaluated data
+     *
      * @var array
      */
     private $cache = [];
@@ -93,9 +95,11 @@ class EntityHelper
     }
 
     /**
-     * @param object|string $entity
+     * Returns full name of the received entity or class name.
      *
-     * @return string
+     * @param object|string $entity Entity object or just entity name in the full or shot notation
+     *
+     * @return string For example 'AcmeBundle\Entity\User'
      */
     public function getEntityClassFull($entity)
     {
@@ -119,9 +123,11 @@ class EntityHelper
     }
 
     /**
-     * @param string|object $entity
+     * Returns short name of the received entity or class name.
      *
-     * @return string
+     * @param string|object $entity Entity object or just entity name in the full or shot notation
+     *
+     * @return string For example 'AcmeBundle:User'
      */
     public function getEntityClassShort($entity)
     {
@@ -148,9 +154,24 @@ class EntityHelper
     }
 
     /**
-     * @param object|string $entity
+     * Returns single identifier field name. In that case when entity have several identifier names
+     * method will be return only first identifier name.
      *
-     * @return string[]
+     * @param object|string $entity Entity object or just entity name in the full or shot notation
+     *
+     * @return string|null
+     */
+    public function getEntityIdName($entity)
+    {
+        return ($fieldNames = $this->getEntityIdNames($entity)) ? reset($fieldNames) : null;
+    }
+
+    /**
+     * Returns an array of identifier field names numerically indexed @see ClassMetadataInfo::getIdentifierFieldNames
+     *
+     * @param object|string $entity Entity object or just entity name in the full or shot notation
+     *
+     * @return array
      */
     public function getEntityIdNames($entity)
     {
@@ -158,27 +179,22 @@ class EntityHelper
     }
 
     /**
-     * @param object|string $entity
+     * Returns single identifier field value. In that case when entity have several identifier
+     * method will be return only first identifier field value.
      *
-     * @return string|null
-     */
-    public function getEntityIdName($entity)
-    {
-        return ($fieldNames = $this->getEntityIdNames($entity)) ? current($fieldNames) : null;
-    }
-
-    /**
-     * @param object $entity
+     * @param object $entity Entity object
      *
-     * @return mixed|null
+     * @return int|string|null
      */
     public function getEntityIdValue($entity)
     {
-        return ($entityIdentifier = $this->getEntityIdValues($entity)) ? current($entityIdentifier) : null;
+        return ($entityIdentifier = $this->getEntityIdValues($entity)) ? reset($entityIdentifier) : null;
     }
 
     /**
-     * @param object $entity
+     * Returns an array of identifier values @see ClassMetadataInfo::getIdentifierValues
+     *
+     * @param object $entity Entity object
      *
      * @return array
      */
@@ -196,7 +212,9 @@ class EntityHelper
     }
 
     /**
-     * @param string|object $entity
+     * Returns ClassMetadata object for received entity
+     *
+     * @param string|object $entity Entity object or just entity name in the full or shot notation
      *
      * @return \Doctrine\ORM\Mapping\ClassMetadata|null
      */
@@ -221,7 +239,9 @@ class EntityHelper
     }
 
     /**
-     * @param object|string $entity
+     * Returns is received entity managed by doctrine or not
+     *
+     * @param object|string $entity Entity object or just entity name in the full or shot notation
      *
      * @return bool
      */
@@ -248,9 +268,12 @@ class EntityHelper
     }
 
     /**
-     * @param string $className
-     * @param string $property
-     * @param bool   $default
+     * Returns appropriated property value form the local cache if exists. Otherwise return default value.
+     *
+     * @param string     $className Entity entity class name in the FULL notation only
+     * @param string     $property  Name of the property
+     * @param bool|mixed $default   Value which should be return be default when requested data
+     *                              does not found in the cache
      *
      * @return mixed
      */
@@ -260,7 +283,9 @@ class EntityHelper
     }
 
     /**
-     * @param object|string $entity
+     * Returns full name of the entity when received object and returns value as is when received string
+     *
+     * @param object|string $entity Entity object or just entity name in the full or shot notation
      *
      * @return string
      */
