@@ -1,3 +1,7 @@
+## [1.0.6] - 2018-03-20
+### Changed
+- Approved support of the Symfony 3.
+
 ## [1.0.5] - 2018-02-13
 ### Added
 - Added informative PhpDoc.
