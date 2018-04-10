@@ -2,7 +2,7 @@
     "name":        "adrenalinkin/entity-helper-bundle",
     "description": "This bundle provides help for the work with entities which managed by Doctrine",
     "type":        "symfony-bundle",
-    "keywords":    ["doctrine", "entity-helper", "symfony-bundle"],
+    "keywords":    ["symfony-bundle", "entity-helper", "doctrine"],
     "license":     "MIT",
 
     "authors": [
